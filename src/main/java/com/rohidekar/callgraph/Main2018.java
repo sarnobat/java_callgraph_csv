@@ -3,7 +3,9 @@
 package com.rohidekar.callgraph;
 
 import com.rohidekar.callgraph.calls.RelationshipToGraphTransformerCallHierarchy;
+import com.rohidekar.callgraph.calls.RelationshipToGraphTransformerCallHierarchyV2;
 import com.rohidekar.callgraph.common.Relationships;
+import com.rohidekar.callgraph.common.RelationshipsV2;
 
 /**
  * The previous version is too complicated to understand so I couldn't
@@ -46,8 +48,8 @@ public class Main2018 {
 	}
 
 	private static void printGraphs(String classDirOrJar) {
-		Relationships relationships = new Relationships(classDirOrJar);
+		RelationshipsV2 relationships = new RelationshipsV2(classDirOrJar);
 		relationships.validate();
-		RelationshipToGraphTransformerCallHierarchy.printCallGraph(relationships);
+		RelationshipToGraphTransformerCallHierarchyV2.printCallGraph(relationships);
 	}
 }

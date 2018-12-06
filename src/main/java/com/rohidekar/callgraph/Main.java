@@ -14,6 +14,7 @@ import com.rohidekar.callgraph.packages.RelationshipToGraphTransformerPackages;
  *
  * 2016-12
  */
+@Deprecated // Not finding syncTestsAndSettings, too complex to debug and fix
 public class Main {
 //  private static Logger log = Logger.getLogger(Main.class);
   // TODO (feature):add call relationship between 
