@@ -75,7 +75,7 @@ public class RelationshipToGraphTransformerCallHierarchyV2 {
 
 	}
 
-	private static Set<GraphNode> findRootCallers(Map<String, GraphNode> allMethodNamesToMethods) {
+	public static Set<GraphNode> findRootCallers(Map<String, GraphNode> allMethodNamesToMethods) {
 		Set<GraphNode> rootMethodNodes;
 		rootMethodNodes = new HashSet<GraphNode>();
 		for (GraphNode aNode : allMethodNamesToMethods.values()) {
@@ -87,7 +87,7 @@ public class RelationshipToGraphTransformerCallHierarchyV2 {
 		return rootMethodNodes;
 	}
 
-	private static Map<String, GraphNode> determineCallHierarchy(RelationshipsV2 relationships) {
+	public static Map<String, GraphNode> determineCallHierarchy(RelationshipsV2 relationships) {
 		relationships.validate();
 		Map<String, GraphNode> allMethodNamesToMethods = new LinkedHashMap<String, GraphNode>();
 		// Create a custom call graph structure from the multimap (flatten)

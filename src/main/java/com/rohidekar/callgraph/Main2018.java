@@ -3,12 +3,14 @@
 package com.rohidekar.callgraph;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.bcel.classfile.JavaClass;
 
 import com.google.common.collect.ImmutableMap;
 import com.rohidekar.callgraph.calls.RelationshipToGraphTransformerCallHierarchy;
 import com.rohidekar.callgraph.calls.RelationshipToGraphTransformerCallHierarchyV2;
+import com.rohidekar.callgraph.common.GraphNode;
 import com.rohidekar.callgraph.common.Relationships;
 import com.rohidekar.callgraph.common.RelationshipsV2;
 
@@ -56,6 +58,14 @@ public class Main2018 {
 		RelationshipsV2 relationships = RelationshipsV2.relationshipsV2(classDirOrJar);
 
 		relationships.validate();
-		RelationshipToGraphTransformerCallHierarchyV2.printCallGraph(relationships);
+		Map<String, GraphNode> allMethodNamesToMethodNodes = RelationshipToGraphTransformerCallHierarchyV2
+				.determineCallHierarchy(relationships);
+		relationships.validate();
+		Set<GraphNode> rootMethodNodes = RelationshipToGraphTransformerCallHierarchyV2
+				.findRootCallers(allMethodNamesToMethodNodes);
+		if (rootMethodNodes.size() < 1) {
+			System.err.println("ERROR: no root nodes to print call tree from.");
+		}
+		RelationshipToGraphTransformerCallHierarchyV2.printTrees(relationships, rootMethodNodes);
 	}
 }
