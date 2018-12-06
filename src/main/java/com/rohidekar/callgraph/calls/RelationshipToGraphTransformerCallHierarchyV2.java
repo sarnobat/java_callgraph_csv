@@ -3,6 +3,7 @@ package com.rohidekar.callgraph.calls;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.rohidekar.callgraph.Main;
+import com.rohidekar.callgraph.Main2018;
 import com.rohidekar.callgraph.common.*;
 import com.rohidekar.callgraph.containments.TreeDepthCalculator;
 
@@ -21,33 +22,33 @@ public class RelationshipToGraphTransformerCallHierarchyV2 {
 
 	public static void printCallGraph(RelationshipsV2 relationships) {
 		Map<String, GraphNode> allMethodNamesToMethodNodes = RelationshipToGraphTransformerCallHierarchyV2
-				.determineCallHierarchy(relationships, relationships.getAllMethodCallers());
+				.determineCallHierarchy(relationships, relationships.getAllMethodCallers(), relationships.getAllMethodNamesToMyInstructions());
 		relationships.validate();
 		Set<GraphNode> rootMethodNodes = RelationshipToGraphTransformerCallHierarchyV2
 				.findRootCallers(allMethodNamesToMethodNodes);
 		if (rootMethodNodes.size() < 1) {
 			System.err.println("ERROR: no root nodes to print call tree from.");
 		}
-		printTrees(relationships, rootMethodNodes);
+		printTrees(rootMethodNodes, relationships.getMinPackageDepth());
 	}
 
-	public static void printTrees(RelationshipsV2 relationships, Set<GraphNode> rootMethodNodes) {
+	public static void printTrees(Set<GraphNode> rootMethodNodes, int minPackageDepth) {
 		Multimap<Integer, TreeModel> depthToRootNodes = LinkedHashMultimap.create();
 		for (GraphNode aRootNode : rootMethodNodes) {
 			TreeModel tree = new MyTreeModel(aRootNode);
 			int treeDepth = TreeDepthCalculator.getTreeDepth(tree);
 			// TODO: move this to the loop below
-			if (aRootNode.getPackageDepth() > relationships.getMinPackageDepth() + Main.ROOT_DEPTH) {
+			if (aRootNode.getPackageDepth() > minPackageDepth + Main2018.ROOT_DEPTH) {
 				continue;
 			}
 			depthToRootNodes.put(treeDepth, tree);
 		}
-		for (int i = Main.MIN_TREE_DEPTH; i < Main.MAX_TREE_DEPTH; i++) {
+		for (int i = Main2018.MIN_TREE_DEPTH; i < Main2018.MAX_TREE_DEPTH; i++) {
 			Integer treeDepth = new Integer(i);
-			if (treeDepth < Main.MIN_TREE_DEPTH) {
+			if (treeDepth < Main2018.MIN_TREE_DEPTH) {
 				continue;
 			}
-			if (treeDepth > Main.MAX_TREE_DEPTH) {
+			if (treeDepth > Main2018.MAX_TREE_DEPTH) {
 				continue;
 			}
 			for (Object aTreeModel : depthToRootNodes.get(treeDepth)) {
@@ -87,7 +88,7 @@ public class RelationshipToGraphTransformerCallHierarchyV2 {
 		return rootMethodNodes;
 	}
 
-	public static Map<String, GraphNode> determineCallHierarchy(RelationshipsV2 relationships, Collection<String> allMethodCallers) {
+	public static Map<String, GraphNode> determineCallHierarchy(RelationshipsV2 relationships, Collection<String> allMethodCallers, Map<String, MyInstruction> allMethodNamesToMyInstructions) {
 		Map<String, GraphNode> allMethodNamesToMethods = new LinkedHashMap<String, GraphNode>();
 		// Create a custom call graph structure from the multimap (flatten)
 		for (String parentMethodNameKey : allMethodCallers) {
@@ -98,7 +99,7 @@ public class RelationshipToGraphTransformerCallHierarchyV2 {
 			}
 			GraphNodeInstruction parentEnd = (GraphNodeInstruction) allMethodNamesToMethods.get(parentMethodNameKey);
 			if (parentEnd == null) {
-				MyInstruction parentMethodInstruction = relationships.getAllMethodNamesToMyInstructions().get(parentMethodNameKey);
+				MyInstruction parentMethodInstruction = allMethodNamesToMyInstructions.get(parentMethodNameKey);
 				if (parentMethodInstruction == null) {
 					System.err.println(
 							"RelationshipToGraphTransformerCallHierarchy.determineCallHierarchy() - WARNING: couldn't find instruction for  "

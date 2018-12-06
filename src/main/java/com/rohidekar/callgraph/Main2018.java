@@ -59,13 +59,13 @@ public class Main2018 {
 
 		relationships.validate();
 		Map<String, GraphNode> allMethodNamesToMethodNodes = RelationshipToGraphTransformerCallHierarchyV2
-				.determineCallHierarchy(relationships, relationships.getAllMethodCallers());
+				.determineCallHierarchy(relationships, relationships.getAllMethodCallers(), relationships.getAllMethodNamesToMyInstructions());
 		relationships.validate();
 		Set<GraphNode> rootMethodNodes = RelationshipToGraphTransformerCallHierarchyV2
 				.findRootCallers(allMethodNamesToMethodNodes);
 		if (rootMethodNodes.size() < 1) {
 			System.err.println("ERROR: no root nodes to print call tree from.");
 		}
-		RelationshipToGraphTransformerCallHierarchyV2.printTrees(relationships, rootMethodNodes);
+		RelationshipToGraphTransformerCallHierarchyV2.printTrees(rootMethodNodes, relationships.getMinPackageDepth());
 	}
 }
