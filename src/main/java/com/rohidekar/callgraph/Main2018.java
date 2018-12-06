@@ -2,17 +2,24 @@
 
 package com.rohidekar.callgraph;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import javax.swing.tree.TreeModel;
 
 import org.apache.bcel.classfile.JavaClass;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Multimap;
 import com.rohidekar.callgraph.calls.RelationshipToGraphTransformerCallHierarchy;
 import com.rohidekar.callgraph.calls.RelationshipToGraphTransformerCallHierarchyV2;
 import com.rohidekar.callgraph.common.GraphNode;
+import com.rohidekar.callgraph.common.MyTreeModel;
 import com.rohidekar.callgraph.common.Relationships;
 import com.rohidekar.callgraph.common.RelationshipsV2;
+import com.rohidekar.callgraph.containments.TreeDepthCalculator;
 
 /**
  * The previous version is too complicated to understand so I couldn't
@@ -66,6 +73,30 @@ public class Main2018 {
 		if (rootMethodNodes.size() < 1) {
 			System.err.println("ERROR: no root nodes to print call tree from.");
 		}
-		RelationshipToGraphTransformerCallHierarchyV2.printTrees(rootMethodNodes, relationships.getMinPackageDepth());
+		Multimap<Integer, TreeModel> depthToRootNodes = LinkedHashMultimap.create();
+		for (GraphNode aRootNode : rootMethodNodes) {
+			TreeModel tree = new MyTreeModel(aRootNode);
+			int treeDepth = TreeDepthCalculator.getTreeDepth(tree);
+			// TODO: move this to the loop below
+			if (aRootNode.getPackageDepth() > relationships.getMinPackageDepth() + Main2018.ROOT_DEPTH) {
+				continue;
+			}
+			depthToRootNodes.put(treeDepth, tree);
+		}
+		for (int i = Main2018.MIN_TREE_DEPTH; i < Main2018.MAX_TREE_DEPTH; i++) {
+			Integer treeDepth = new Integer(i);
+			if (treeDepth < Main2018.MIN_TREE_DEPTH) {
+				continue;
+			}
+			if (treeDepth > Main2018.MAX_TREE_DEPTH) {
+				continue;
+			}
+			for (Object aTreeModel : depthToRootNodes.get(treeDepth)) {
+				TreeModel aTreeModel2 = (TreeModel) aTreeModel;
+				// new TextTree(aTreeModel2).printTree();
+				GraphNode rootNode = (GraphNode) aTreeModel2.getRoot();
+				RelationshipToGraphTransformerCallHierarchyV2.printTreeTest(rootNode, 0, new HashSet<GraphNode>());
+			}
+		}
 	}
 }

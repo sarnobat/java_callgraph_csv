@@ -20,47 +20,7 @@ import javax.swing.tree.TreeModel;
  */
 public class RelationshipToGraphTransformerCallHierarchyV2 {
 
-	public static void printCallGraph(RelationshipsV2 relationships) {
-		Map<String, GraphNode> allMethodNamesToMethodNodes = RelationshipToGraphTransformerCallHierarchyV2
-				.determineCallHierarchy(relationships, relationships.getAllMethodCallers(), relationships.getAllMethodNamesToMyInstructions());
-		relationships.validate();
-		Set<GraphNode> rootMethodNodes = RelationshipToGraphTransformerCallHierarchyV2
-				.findRootCallers(allMethodNamesToMethodNodes);
-		if (rootMethodNodes.size() < 1) {
-			System.err.println("ERROR: no root nodes to print call tree from.");
-		}
-		printTrees(rootMethodNodes, relationships.getMinPackageDepth());
-	}
-
-	public static void printTrees(Set<GraphNode> rootMethodNodes, int minPackageDepth) {
-		Multimap<Integer, TreeModel> depthToRootNodes = LinkedHashMultimap.create();
-		for (GraphNode aRootNode : rootMethodNodes) {
-			TreeModel tree = new MyTreeModel(aRootNode);
-			int treeDepth = TreeDepthCalculator.getTreeDepth(tree);
-			// TODO: move this to the loop below
-			if (aRootNode.getPackageDepth() > minPackageDepth + Main2018.ROOT_DEPTH) {
-				continue;
-			}
-			depthToRootNodes.put(treeDepth, tree);
-		}
-		for (int i = Main2018.MIN_TREE_DEPTH; i < Main2018.MAX_TREE_DEPTH; i++) {
-			Integer treeDepth = new Integer(i);
-			if (treeDepth < Main2018.MIN_TREE_DEPTH) {
-				continue;
-			}
-			if (treeDepth > Main2018.MAX_TREE_DEPTH) {
-				continue;
-			}
-			for (Object aTreeModel : depthToRootNodes.get(treeDepth)) {
-				TreeModel aTreeModel2 = (TreeModel) aTreeModel;
-				// new TextTree(aTreeModel2).printTree();
-				GraphNode rootNode = (GraphNode) aTreeModel2.getRoot();
-				printTreeTest(rootNode, 0, new HashSet<GraphNode>());
-			}
-		}
-	}
-
-	private static void printTreeTest(GraphNode tn, int level, Set<GraphNode> visited) {
+	public static void printTreeTest(GraphNode tn, int level, Set<GraphNode> visited) {
 		if (visited.contains(tn)) {
 			return;
 		}
