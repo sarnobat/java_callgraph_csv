@@ -2,6 +2,11 @@
 
 package com.rohidekar.callgraph;
 
+import java.util.Map;
+
+import org.apache.bcel.classfile.JavaClass;
+
+import com.google.common.collect.ImmutableMap;
 import com.rohidekar.callgraph.calls.RelationshipToGraphTransformerCallHierarchy;
 import com.rohidekar.callgraph.calls.RelationshipToGraphTransformerCallHierarchyV2;
 import com.rohidekar.callgraph.common.Relationships;
@@ -48,7 +53,8 @@ public class Main2018 {
 	}
 
 	private static void printGraphs(String classDirOrJar) {
-		RelationshipsV2 relationships = new RelationshipsV2(classDirOrJar);
+		RelationshipsV2 relationships = RelationshipsV2.relationshipsV2(classDirOrJar);
+
 		relationships.validate();
 		RelationshipToGraphTransformerCallHierarchyV2.printCallGraph(relationships);
 	}
