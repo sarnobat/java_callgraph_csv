@@ -19,7 +19,7 @@ public class Ignorer {
         return true;
       }
     }
-    System.err.println(classFullName + " was not ignored");
+//    System.err.println(classFullName + " was not ignored");
     return false;
   }
 

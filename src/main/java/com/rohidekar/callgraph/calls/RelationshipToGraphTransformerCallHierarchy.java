@@ -54,7 +54,8 @@ public class RelationshipToGraphTransformerCallHierarchy {
           System.err.println(
               "RelationshipToGraphTransformerCallHierarchy.determineCallHierarchy() - WARNING: couldn't find instruction for  "
                   + parentMethodNameKey);
-          continue;
+          //continue;
+          System.exit(-1);
         }
         parentEnd = new GraphNodeInstruction(parentMethodInstruction);
         allMethodNamesToMethods.put(parentMethodNameKey, parentEnd);

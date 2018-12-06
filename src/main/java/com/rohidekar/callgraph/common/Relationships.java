@@ -51,11 +51,57 @@ public class Relationships {
   Relationships() {}
 
   public Relationships(String resource) {
+	  System.err.println("SRIDHAR Relationships.Relationships() - visiting classes in " + resource);
     Map<String, JavaClass> javaClasses = JavaClassGenerator.getJavaClassesFromResource(resource);
     this.classNameToJavaClassMap = ImmutableMap.copyOf(javaClasses);
     for (JavaClass jc : this.classNameToJavaClassMap.values()) {
       visitJavaClass(jc, this);
     }
+	  System.err.println("SRIDHAR Relationships.Relationships() - finished visiting classes in " + resource);
+    System.err.println("" + callingMethodToMethodInvocationMultiMap.values().size());
+    System.err.println("" + classNameToFieldTypesMultiMap.keySet().size());
+    System.err.println("" + classNameToFieldTypeNamesMultiMap.keySet().size());
+    System.err.println("" + parentPackageNameToChildPackageNameMultiMap.keySet().size());
+    System.err.println("" + allMethodNameToMyInstructionMap.keySet().size());
+    System.err.println("" + classNameToJavaClassMap.keySet().size());
+    System.err.println("" + deferredChildContainments.size());
+    System.err.println("" + deferredSuperMethod.size());
+    System.err.println("" + deferredParentContainments.size());
+    if (callingMethodToMethodInvocationMultiMap.values().size() == 0) {
+		throw new RuntimeException("");
+}
+
+    if (classNameToFieldTypesMultiMap.keySet().size() == 0) {
+    		throw new RuntimeException("");
+    }
+
+    if (classNameToFieldTypeNamesMultiMap.keySet().size() == 0) {
+    		throw new RuntimeException("");
+    }
+
+    if (parentPackageNameToChildPackageNameMultiMap.keySet().size() == 0) {
+    		throw new RuntimeException("");
+    }
+
+    if (allMethodNameToMyInstructionMap.keySet().size() == 0) {
+    		throw new RuntimeException("");
+    }
+
+    if (classNameToJavaClassMap.keySet().size() == 0) {
+    		throw new RuntimeException("");
+    }
+
+    if (deferredChildContainments.size() == 0) {
+    		throw new RuntimeException("");
+    }
+
+    if (deferredSuperMethod.size() == 0) {
+    		throw new RuntimeException("");
+    }
+    if (deferredParentContainments.size() == 0) {
+		throw new RuntimeException("");
+    }
+
     // These deferred relationships should not be necessary, but if you debug them you'll see that
     // they find additional relationships.
     DeferredRelationships.handleDeferredRelationships(this);
@@ -114,7 +160,7 @@ public class Relationships {
 
   public void addContainmentRelationship(String parentClassFullName, JavaClass javaClass) {
     if (!Ignorer.shouldIgnore(javaClass)) {
-      System.err.println("CONTAINMENT: " + parentClassFullName + "--> " + javaClass.getClassName());
+//      System.err.println("CONTAINMENT: " + parentClassFullName + "--> " + javaClass.getClassName());
     }
     classNameToFieldTypesMultiMap.put(parentClassFullName, javaClass);
     addContainmentRelationshipStringOnly(parentClassFullName, javaClass.getClassName());
@@ -185,7 +231,7 @@ public class Relationships {
       jc = Repository.lookupClass(aClassFullName);
     } catch (ClassNotFoundException e) {
       if (this.classNameToJavaClassMap.get(aClassFullName) != null) {
-        System.err.println("We do need our own homemade repository. I don't know why");
+        System.err.println("SRIDHAR Relationships.getClassDef() - We do need our own homemade repository. I don't know why becl Repository.lookupClass() can't find " + aClassFullName);
       }
     }
     if (jc == null) {
@@ -201,6 +247,7 @@ public class Relationships {
       JavaClass anInterface = this.classNameToJavaClassMap.get(interfaceName);
       if (anInterface == null) {
         // Do it later
+    	  System.err.println("    SRIDHAR Relationships.getParentClassesAndInterfaces() - deferring finding parent classes/interfaces of " + interfaceName);
         deferParentContainment(interfaceName, childClass);
       } else {
         superClassesAndInterfaces.add(anInterface);
@@ -217,7 +264,7 @@ public class Relationships {
       }
     }
     if (superClassesAndInterfaces.size() > 0) {
-      System.err.println("Has a parent (" + childClass.getClassName() + ")");
+//      System.err.println("Has a parent (" + childClass.getClassName() + ")");
     }
     return ImmutableSet.copyOf(superClassesAndInterfaces);
   }
@@ -254,7 +301,7 @@ public class Relationships {
   }
 
   public void deferParentContainment(String parentClassName, JavaClass javaClass) {
-    System.err.println("Deferring " + parentClassName + " --> " + javaClass.getClassName());
+    //System.err.println("Deferring " + parentClassName + " --> " + javaClass.getClassName());
     this.deferredParentContainments.add(new DeferredParentContainment(parentClassName, javaClass));
   }
 

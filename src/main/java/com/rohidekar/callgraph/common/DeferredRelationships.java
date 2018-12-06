@@ -31,9 +31,10 @@ class DeferredRelationships {
         deferredSuperMethod.getparentClassOrInterface(),
         deferredSuperMethod.getunqualifiedMethodName(), relationships);
     if (parentInstruction == null) {
-      System.err.println("Parent instruction was not found");
+      System.err.println("SRIDHAR DeferredRelationships.handleDeferredSuperMethod() - Parent instruction was not found - " + deferredSuperMethod.getparentClassOrInterface().getClassName() + "::" + deferredSuperMethod.getunqualifiedMethodName());
+      //System.exit(-1);
     } else {
-      System.err.println(parentInstruction.getMethodNameQualified() + " -> "
+      System.err.println("SRIDHAR DeferredRelationships.handleDeferredSuperMethod() - " + parentInstruction.getMethodNameQualified() + " -> "
             + deferredSuperMethod.gettarget().getMethodNameQualified());
       if (!relationships.methodCallExists(deferredSuperMethod.gettarget().getMethodNameQualified(),
           parentInstruction.getMethodNameQualified())) {
@@ -51,13 +52,16 @@ class DeferredRelationships {
         parentClass = Repository.lookupClass(aDeferredParentContainment.getParentClassName());
       } catch (ClassNotFoundException e) {
         if (!Ignorer.shouldIgnore(aDeferredParentContainment.getParentClassName())) {
-          System.err.println(aDeferredParentContainment.getParentClassName());
+          System.err.println("SRIDHAR DeferredRelationships.handleDeferredParentContainment() - Found "+aDeferredParentContainment.getParentClassName());
         }
       }
     }
     if (parentClass != null) {
+    	//System.out.println("SRIDHAR DeferredRelationships.handleDeferredParentContainment() - finally able to get parent containment relationship ");
       MyClassVisitor.addContainmentRelationship(parentClass,
           aDeferredParentContainment.getChildClass().getClassName(), relationships, false);
+    } else {
+    		System.err.println("SRIDHAR DeferredRelationships.handleDeferredParentContainment() - still not able to get any info about parent class " + aDeferredParentContainment.getParentClassName());
     }
   }
 }

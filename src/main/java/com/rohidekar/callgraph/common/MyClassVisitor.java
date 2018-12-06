@@ -103,32 +103,38 @@ class MyClassVisitor extends ClassVisitor {
     }
   }
 
-  public static void addContainmentRelationship(JavaClass classToVisit,
+  public static void addContainmentRelationship(JavaClass parentClassToVisit,
       String childClassNameQualified, Relationships relationships, boolean allowDeferral) {
     if (Ignorer.shouldIgnore(childClassNameQualified)) {
       return;
     }
-    JavaClass jc = null;
+    JavaClass childClass = null;
     try {
-      jc = Repository.lookupClass(childClassNameQualified);
+      childClass = Repository.lookupClass(childClassNameQualified);
+      System.err.println("SRIDHAR MyClassVisitor.addContainmentRelationship() - this NEVER works");
+      System.exit(-1);
     } catch (ClassNotFoundException e) {
       
         System.err.println(e);
       if (allowDeferral) {
-        relationships.deferContainmentVisit(classToVisit, childClassNameQualified);
+        relationships.deferContainmentVisit(parentClassToVisit, childClassNameQualified);
+		System.err.println("SRIDHAR MyClassVisitor.addContainmentRelationship() - delay determining containment of " + childClassNameQualified);
       } else {
-        jc = relationships.getClassDef(childClassNameQualified);
-        if (jc == null) {
+        childClass = relationships.getClassDef(childClassNameQualified);
+        if (childClass == null) {
           if (!Ignorer.shouldIgnore(childClassNameQualified)) {
             System.err.println("WARN: Still can't find " + childClassNameQualified);
           }
+        } else {
+        		System.err.println("SRIDHAR MyClassVisitor.addContainmentRelationship() - finally were able to determine containment: " + parentClassToVisit.getClassName() +" is a parent class of " + childClass.getClassName());
         }
       }
     }
-    if (jc == null) {
+    if (childClass == null) {
       System.err.println("WARN: Couldn't find " + childClassNameQualified);
     } else {
-      relationships.addContainmentRelationship(classToVisit.getClassName(), jc);
+    	// TODO: this is bad. We are mutating an input parameter. No wonder this code is so hard to understand
+      relationships.addContainmentRelationship(parentClassToVisit.getClassName(), childClass);
     }
   }
 }

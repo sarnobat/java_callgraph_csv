@@ -119,17 +119,21 @@ class MyMethodVisitor extends MethodVisitor {
 
     Collection<JavaClass> superClasses = relationships.getParentClassesAndInterfaces(visitedClass);
     for (JavaClass parentClassOrInterface : superClasses) {
+    	System.err.println("SRIDHAR MyMethodVisitor.linkMethodToSuperclassMethod() " + visitedClass.getClassName() + " subclasses " + parentClassOrInterface.getClassName());
       MyInstruction parentInstruction =
           getInstruction(parentClassOrInterface, unqualifiedMethodName, relationships);
       if (parentInstruction == null) {
         // It may be that we're looking in the wrong superclass/interface and that we should just
         // continue
         // carry on
+    	  System.err.println("  SRIDHAR MyMethodVisitor.linkMethodToSuperclassMethod() need to defer finding MyInstruction for " + parentClassOrInterface.getClassName() +"::" + unqualifiedMethodName);
         relationships.deferSuperMethodRelationshipCapture(
             new DeferredSuperMethod(parentClassOrInterface, unqualifiedMethodName, target));
       } else {
-        System.err.println(parentInstruction.getMethodNameQualified() + " -> "
-              + target.getMethodNameQualified());
+        //System.err.println("linkMethodToSuperclassMethod() - " + parentInstruction.getMethodNameQualified() + " -> "
+        //      + target.getMethodNameQualified());
+    	  
+    	    // Usual case
         relationships.addMethodCall(
             parentInstruction.getMethodNameQualified(), target, target.getMethodNameQualified());
       }
