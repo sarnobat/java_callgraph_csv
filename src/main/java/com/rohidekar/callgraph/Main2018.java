@@ -59,7 +59,7 @@ public class Main2018 {
 
 		relationships.validate();
 		Map<String, GraphNode> allMethodNamesToMethodNodes = RelationshipToGraphTransformerCallHierarchyV2
-				.determineCallHierarchy(relationships);
+				.determineCallHierarchy(relationships, relationships.getAllMethodCallers());
 		relationships.validate();
 		Set<GraphNode> rootMethodNodes = RelationshipToGraphTransformerCallHierarchyV2
 				.findRootCallers(allMethodNamesToMethodNodes);

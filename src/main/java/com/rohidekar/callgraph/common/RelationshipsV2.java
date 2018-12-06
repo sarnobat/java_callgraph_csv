@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 
 import org.apache.bcel.Repository;
 import org.apache.bcel.classfile.ClassFormatException;
@@ -104,6 +105,7 @@ public class RelationshipsV2 {
 				entries = Collections.list(new JarFile(jarFile).entries());
 			} catch (IOException e) {
 				System.err.println("JavaClassGenerator.getJavaClassesFromResource() - " + e);
+				System.exit(-1);
 			}
 			if (entries == null) {
 				System.err.println("JavaClassGenerator.getJavaClassesFromResource() - No entry");
@@ -226,6 +228,10 @@ public class RelationshipsV2 {
 
 	public Collection<String> getAllMethodCallers() {
 		return ImmutableSet.copyOf(callingMethodToMethodInvocationMultiMap.keySet());
+	}
+
+	public Map<String, Collection<MyInstruction>> getAllMethodCallersMap() {
+		return Multimaps.asMap(callingMethodToMethodInvocationMultiMap);
 	}
 
 	public Collection<MyInstruction> getCalledMethods(String parentMethodNameKey) {
@@ -354,6 +360,9 @@ public class RelationshipsV2 {
 
 	public Set<String> getAllMethodNames() {
 		return ImmutableSet.copyOf(allMethodNameToMyInstructionMap.keySet());
+	}
+	public Map<String, MyInstruction> getAllMethodNamesToMyInstructions() {
+		return ImmutableMap.copyOf(allMethodNameToMyInstructionMap);
 	}
 
 	private Map<String, Boolean> isMethodVisited = new HashMap<String, Boolean>();
