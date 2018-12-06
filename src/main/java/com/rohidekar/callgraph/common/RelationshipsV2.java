@@ -52,60 +52,15 @@ public class RelationshipsV2 {
 		for (JavaClass jc : this.classNameToJavaClassMap.values()) {
 			visitJavaClass(jc, this);
 		}
-		System.err.println("SRIDHAR Relationships.Relationships() - finished visiting classes in " + resource);
-		System.err.println("" + callingMethodToMethodInvocationMultiMap.values().size());
-		System.err.println("" + classNameToFieldTypesMultiMap.keySet().size());
-		System.err.println("" + classNameToFieldTypeNamesMultiMap.keySet().size());
-		System.err.println("" + parentPackageNameToChildPackageNameMultiMap.keySet().size());
-		System.err.println("" + allMethodNameToMyInstructionMap.keySet().size());
-		System.err.println("" + classNameToJavaClassMap.keySet().size());
-		System.err.println("" + deferredChildContainments.size());
-		System.err.println("" + deferredSuperMethod.size());
-		System.err.println("" + deferredParentContainments.size());
-		if (callingMethodToMethodInvocationMultiMap.values().size() == 0) {
-			throw new RuntimeException("");
-		}
-
-		if (classNameToFieldTypesMultiMap.keySet().size() == 0) {
-			throw new RuntimeException("");
-		}
-
-		if (classNameToFieldTypeNamesMultiMap.keySet().size() == 0) {
-			throw new RuntimeException("");
-		}
-
-		if (parentPackageNameToChildPackageNameMultiMap.keySet().size() == 0) {
-			throw new RuntimeException("");
-		}
-
-		if (allMethodNameToMyInstructionMap.keySet().size() == 0) {
-			throw new RuntimeException("");
-		}
-
-		if (classNameToJavaClassMap.keySet().size() == 0) {
-			throw new RuntimeException("");
-		}
-
-		if (deferredChildContainments.size() == 0) {
-			throw new RuntimeException("");
-		}
-
-		if (deferredSuperMethod.size() == 0) {
-			throw new RuntimeException("");
-		}
-		if (deferredParentContainments.size() == 0) {
-			throw new RuntimeException("");
-		}
 
 		// These deferred relationships should not be necessary, but if you debug them
-		// you'll see that
-		// they find additional relationships.
-		DeferredRelationships.handleDeferredRelationships(this);
+		// you'll see that they find additional relationships.
+		DeferredRelationshipsV2.handleDeferredRelationships(this);
 	}
 
-	private static void visitJavaClass(JavaClass javaClass, Relationships relationships) {
+	private static void visitJavaClass(JavaClass javaClass, RelationshipsV2 relationships) {
 		try {
-			new MyClassVisitor(javaClass, relationships).visitJavaClass(javaClass);
+			new MyClassVisitorV2(javaClass, relationships).visitJavaClass(javaClass);
 		} catch (ClassFormatException e) {
 			e.printStackTrace();
 		}
